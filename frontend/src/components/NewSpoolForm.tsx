@@ -1,25 +1,38 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { API, Product, Spool } from '../api'
 import { openLabelAsPng } from '../utils/printLabel'
 
-export default function NewSpoolForm({ onCreated }: { onCreated: (s: Spool) => void }) {
-  const [products, setProducts] = useState<Product[]>([])
-  const defaultForm = { product_id: 0, gross_start_g: undefined as number | undefined, net_start_g: undefined as number | undefined, label_note: '' }
-  const [form, setForm] = useState(defaultForm)
+// Diese Version erhält die Produktliste als Prop von App.tsx.
+// Sobald in NewProductForm ein neues Produkt erstellt wurde und App.refresh() läuft,
+// wird die Liste hier automatisch neu gerendert – kein Reload nötig.
 
-  useEffect(() => { API.get<Product[]>('/api/products').then(r => setProducts(r.data)) }, [])
+export default function NewSpoolForm({
+  products,
+  onCreated,
+}: {
+  products: Product[]
+  onCreated: (s: Spool) => void
+}) {
+  const defaultForm = {
+    product_id: 0,
+    gross_start_g: undefined as number | undefined,
+    net_start_g: undefined as number | undefined,
+    label_note: ''
+  }
+  const [form, setForm] = useState(defaultForm)
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
-	const payload = { ...form }
-	if (payload.net_start_g === undefined) payload.net_start_g = 1000
-	const { data } = await API.post<Spool>('/api/spools', payload)
-	
-	setForm(defaultForm)
-	onCreated(data)
-	
-	// Direkt Label drucken
-	await openLabelAsPng(data.id)
+    const payload = { ...form }
+    if (payload.net_start_g === undefined) payload.net_start_g = 1000
+
+    const { data } = await API.post<Spool>('/api/spools', payload)
+
+    setForm(defaultForm)
+    onCreated(data)
+
+    // Direkt Label drucken
+    await openLabelAsPng(data.id)
   }
 
   return (
@@ -28,9 +41,17 @@ export default function NewSpoolForm({ onCreated }: { onCreated: (s: Spool) => v
       <div className="grid cols-2">
         <label>
           Produkt
-          <select value={form.product_id} onChange={e => setForm({ ...form, product_id: +e.target.value })} required>
+          <select
+            value={form.product_id}
+            onChange={e => setForm({ ...form, product_id: +e.target.value })}
+            required
+          >
             <option value={0}>Produkt wählen…</option>
-            {products.map(p => <option key={p.id} value={p.id}>{p.manufacturer} {p.name} · {p.color_name}</option>)}
+            {products.map(p => (
+              <option key={p.id} value={p.id}>
+                {p.manufacturer} {p.name} · {p.color_name}
+              </option>
+            ))}
           </select>
         </label>
         <label>

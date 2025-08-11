@@ -11,11 +11,11 @@ export default function App() {
   const [products, setProducts] = useState<Product[]>([])
   const [spools, setSpools] = useState<Spool[]>([])
   const [openAdd, setOpenAdd] = useState(false)
-  const [openActive, setOpenActive] = useState(false) // default closed
-  const [openEmpty, setOpenEmpty] = useState(false)   // default closed
+  const [openActive, setOpenActive] = useState(false)
+  const [openEmpty, setOpenEmpty] = useState(false)
 
-  // NEW: Material-Filter-State
   const [materialFilter, setMaterialFilter] = useState<string>('')
+  const [searchSpoolId, setSearchSpoolId] = useState<string>('')
 
   const refresh = useCallback(async () => {
     const [p, s] = await Promise.all([
@@ -31,7 +31,14 @@ export default function App() {
   const activeSpools = spools.filter(s => s.net_current_g > 0)
   const emptySpools = spools.filter(s => s.net_current_g === 0)
 
-  // Alle verfügbaren Materialien für das Dropdown (aus Produkten)
+  // Suche nach SpoolID (nur für "Aktive Rollen")
+  const [spoolIdQuery, setSpoolIdQuery] = useState('')
+  const displayedActiveSpools = useMemo(() => {
+    const q = spoolIdQuery.trim()
+    if (!q) return activeSpools
+    return activeSpools.filter(s => String((s as any).id).includes(q))
+  }, [activeSpools, spoolIdQuery])
+
   const materials = useMemo(() => {
     const list = Array.from(new Set(
       products
@@ -41,7 +48,6 @@ export default function App() {
     return list.sort((a, b) => a.localeCompare(b))
   }, [products])
 
-  // Produkt-IDs, die zum aktuell gewählten Material gehören
   const filteredProductIds = useMemo(() => {
     if (!materialFilter) return new Set(products.map(p => (p as any).id))
     return new Set(
@@ -51,23 +57,24 @@ export default function App() {
     )
   }, [products, materialFilter])
 
-  // Gefilterte Daten für die Farb-Übersicht
   const filteredProducts = useMemo(() => {
     if (!materialFilter) return products
     return products.filter(p => (p as any).material === materialFilter)
   }, [products, materialFilter])
 
   const filteredActiveSpools = useMemo(() => {
-    // Hinweis: wir nehmen an, dass die Spule ein Feld product_id hat.
-    // Falls es productId heißt, bitte unten entsprechend anpassen.
-    return activeSpools.filter(s => filteredProductIds.has((s as any).product_id))
-  }, [activeSpools, filteredProductIds])
+    return activeSpools
+      .filter(s => filteredProductIds.has((s as any).product_id))
+      .filter(s =>
+        searchSpoolId.trim() === '' ||
+        String(s.id).toLowerCase().includes(searchSpoolId.trim().toLowerCase())
+      )
+  }, [activeSpools, filteredProductIds, searchSpoolId])
 
   return (
     <div className="app">
       <h2>Filament Lager</h2>
 
-      {/* 1) Hinzufügen (aufklappbar) */}
       <section className="card">
         <button
           className="accordion"
@@ -87,7 +94,6 @@ export default function App() {
         )}
       </section>
 
-      {/* 2) Farb-Übersicht */}
       <section className="card">
         <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', flexWrap: 'wrap' }}>
           <h3 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -111,20 +117,61 @@ export default function App() {
         <ColorOverview products={filteredProducts} spools={filteredActiveSpools} />
       </section>
 
-      {/* 3) Aktive Rollen */}
       <section className="card">
-        <button className="accordion" onClick={() => setOpenActive(o => !o)} aria-expanded={openActive}>
-          <span className="left"><Boxes size={18} /> Aktive Rollen</span>
-          <span className="right"><span className="badge">{activeSpools.length}</span>{openActive ? <ChevronDown size={18} /> : <ChevronRight size={18} />}</span>
-        </button>
+        {/* Kopfzeile mit Toggle + stets sichtbarem Suchfeld */}
+        <div
+          className="section-header"
+          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}
+        >
+          <button
+            className="accordion"
+            onClick={() => setOpenActive(o => !o)}
+            aria-expanded={openActive}
+            style={{ flex: 1 }}
+          >
+            <span className="left"><Boxes size={18} /> Aktive Rollen</span>
+            <span className="right">
+              <span className="badge">{activeSpools.length}</span>
+              {openActive ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+            </span>
+          </button>
+
+          {/* Suchfeld neben/in der Überschrift, sichtbar auch wenn zugeklappt */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.9rem' }}>Spool-ID:</span>
+              <input
+                type="text"
+                placeholder="z. B. 123"
+                value={spoolIdQuery}
+                onChange={(e) => {
+                  const val = e.target.value
+                  setSpoolIdQuery(val)
+                  if (val.trim() !== '') setOpenActive(true) // beim Tippen automatisch aufklappen
+                }}
+                style={{ maxWidth: 180 }}
+                aria-label="Nach Spool-ID filtern"
+              />
+            </label>
+            {spoolIdQuery && (
+              <button
+                type="button"
+                onClick={() => setSpoolIdQuery('')}
+                title="Filter zurücksetzen"
+              >
+                Zurücksetzen
+              </button>
+            )}
+          </div>
+        </div>
+
         {openActive && (
           <div className="accordion-panel">
-            <SpoolList products={products} spools={activeSpools} onChanged={refresh} showActions />
+            <SpoolList products={products} spools={displayedActiveSpools} onChanged={refresh} showActions />
           </div>
         )}
       </section>
 
-      {/* 4) Leere Rollen */}
       <section className="card">
         <button className="accordion" onClick={() => setOpenEmpty(o => !o)} aria-expanded={openEmpty}>
           <span className="left"><Trash2 size={18} /> Leere Rollen</span>
