@@ -180,10 +180,42 @@ input:focus, select:focus, textarea:focus {
   border-bottom: 1px solid var(--card-bd);
 }
 
-.color-dot {
-  width: 14px; height: 14px; border-radius: 50%;
-  border: 1px solid #aaa; display: inline-block;
-  vertical-align: middle; margin-right: 6px;
+.color-swatch {
+  width: 28px;            /* ~ doppelt so lang wie 14px Höhe */
+  height: 14px;
+  border-radius: 5px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 6px;
+  position: relative;
+  background: var(--swatch, #ccc); /* Farbe kommt per CSS-Var rein */
+  /* 3D: Innen- und Außen-Schatten */
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.6),   /* Licht oben */
+    inset 0 -1px 1px rgba(0,0,0,0.25),       /* Schatten unten */
+    0 0 0 1px rgba(0,0,0,0.15),              /* feine Kontur */
+    0 1px 3px rgba(0,0,0,0.2);               /* leichter Lift */
+}
+
+/* Glanzverlauf oben drüber */
+.color-swatch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.35),
+    rgba(255,255,255,0.0) 55%,
+    rgba(0,0,0,0.12) 100%
+  );
+}
+
+.item-field-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 }
 
 /* ===========================
@@ -274,6 +306,26 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* ===========================
+   NEW: Consistent 2-col rows for Material/Farbe
+   =========================== */
+
+.item-field-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-items: start;
+}
+.item-col {
+  display: flex;
+  flex-direction: column;
+}
+.item-col .item-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===========================
    Print / Label (57x32mm quer)
    =========================== */
 
@@ -357,4 +409,3 @@ input:focus, select:focus, textarea:focus {
   .no-print { display: none !important; }
   .label-outer { border: none; box-shadow: none; }
 }
-

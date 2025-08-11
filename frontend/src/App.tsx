@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { API, Product, Spool } from './api'
 import NewProductForm from './components/NewProductForm'
 import NewSpoolForm from './components/NewSpoolForm'
@@ -10,9 +10,12 @@ import './style.css'
 export default function App() {
   const [products, setProducts] = useState<Product[]>([])
   const [spools, setSpools] = useState<Spool[]>([])
-   const [openAdd, setOpenAdd] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false)
   const [openActive, setOpenActive] = useState(false) // default closed
   const [openEmpty, setOpenEmpty] = useState(false)   // default closed
+
+  // NEW: Material-Filter-State
+  const [materialFilter, setMaterialFilter] = useState<string>('')
 
   const refresh = useCallback(async () => {
     const [p, s] = await Promise.all([
@@ -28,7 +31,39 @@ export default function App() {
   const activeSpools = spools.filter(s => s.net_current_g > 0)
   const emptySpools = spools.filter(s => s.net_current_g === 0)
 
-   return (
+  // Alle verfügbaren Materialien für das Dropdown (aus Produkten)
+  const materials = useMemo(() => {
+    const list = Array.from(new Set(
+      products
+        .map(p => (p as any).material)
+        .filter(Boolean)
+    )) as string[]
+    return list.sort((a, b) => a.localeCompare(b))
+  }, [products])
+
+  // Produkt-IDs, die zum aktuell gewählten Material gehören
+  const filteredProductIds = useMemo(() => {
+    if (!materialFilter) return new Set(products.map(p => (p as any).id))
+    return new Set(
+      products
+        .filter(p => (p as any).material === materialFilter)
+        .map(p => (p as any).id)
+    )
+  }, [products, materialFilter])
+
+  // Gefilterte Daten für die Farb-Übersicht
+  const filteredProducts = useMemo(() => {
+    if (!materialFilter) return products
+    return products.filter(p => (p as any).material === materialFilter)
+  }, [products, materialFilter])
+
+  const filteredActiveSpools = useMemo(() => {
+    // Hinweis: wir nehmen an, dass die Spule ein Feld product_id hat.
+    // Falls es productId heißt, bitte unten entsprechend anpassen.
+    return activeSpools.filter(s => filteredProductIds.has((s as any).product_id))
+  }, [activeSpools, filteredProductIds])
+
+  return (
     <div className="app">
       <h2>Filament Lager</h2>
 
@@ -36,11 +71,11 @@ export default function App() {
       <section className="card">
         <button
           className="accordion"
-          onClick={()=>setOpenAdd(v=>!v)}
+          onClick={() => setOpenAdd(v => !v)}
           aria-expanded={openAdd}
         >
-          <span className="left"><Plus size={18}/> Hinzufügen</span>
-          <span className="right">{openAdd ? <ChevronDown size={18}/> : <ChevronRight size={18}/>}</span>
+          <span className="left"><Plus size={18} /> Hinzufügen</span>
+          <span className="right">{openAdd ? <ChevronDown size={18} /> : <ChevronRight size={18} />}</span>
         </button>
         {openAdd && (
           <div className="accordion-panel">
@@ -54,15 +89,33 @@ export default function App() {
 
       {/* 2) Farb-Übersicht */}
       <section className="card">
-        <h3 className="section-title"><Palette size={18}/> Farb-Übersicht</h3>
-        <ColorOverview products={products} spools={activeSpools} />
+        <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <h3 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Palette size={18} /> Farb-Übersicht
+          </h3>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.9rem' }}>Material:</span>
+            <select
+              value={materialFilter}
+              onChange={(e) => setMaterialFilter(e.target.value)}
+              aria-label="Material filtern"
+            >
+              <option value="">Alle Materialien</option>
+              {materials.map(m => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <br></br>
+        <ColorOverview products={filteredProducts} spools={filteredActiveSpools} />
       </section>
 
       {/* 3) Aktive Rollen */}
       <section className="card">
-        <button className="accordion" onClick={()=>setOpenActive(o=>!o)} aria-expanded={openActive}>
-          <span className="left"><Boxes size={18}/> Aktive Rollen</span>
-          <span className="right"><span className="badge">{activeSpools.length}</span>{openActive ? <ChevronDown size={18}/> : <ChevronRight size={18}/>}</span>
+        <button className="accordion" onClick={() => setOpenActive(o => !o)} aria-expanded={openActive}>
+          <span className="left"><Boxes size={18} /> Aktive Rollen</span>
+          <span className="right"><span className="badge">{activeSpools.length}</span>{openActive ? <ChevronDown size={18} /> : <ChevronRight size={18} />}</span>
         </button>
         {openActive && (
           <div className="accordion-panel">
@@ -73,9 +126,9 @@ export default function App() {
 
       {/* 4) Leere Rollen */}
       <section className="card">
-        <button className="accordion" onClick={()=>setOpenEmpty(o=>!o)} aria-expanded={openEmpty}>
-          <span className="left"><Trash2 size={18}/> Leere Rollen</span>
-          <span className="right"><span className="badge">{emptySpools.length}</span>{openEmpty ? <ChevronDown size={18}/> : <ChevronRight size={18}/>}</span>
+        <button className="accordion" onClick={() => setOpenEmpty(o => !o)} aria-expanded={openEmpty}>
+          <span className="left"><Trash2 size={18} /> Leere Rollen</span>
+          <span className="right"><span className="badge">{emptySpools.length}</span>{openEmpty ? <ChevronDown size={18} /> : <ChevronRight size={18} />}</span>
         </button>
         {openEmpty && (
           <div className="accordion-panel">
