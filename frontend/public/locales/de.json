@@ -1,0 +1,20 @@
+{
+  "app.title": "Filament Lager",
+  "add.section": "Hinzufügen",
+  "colors.section": "Farb-Übersicht",
+  "material": "Material",
+  "color": "Farbe",
+  "in.stock": "Auf Lager",
+  "left.open": "Rest offen",
+  "active.spools": "Aktive Rollen",
+  "empty.spools": "Leere Rollen",
+  "spool.id": "Rollen-ID",
+  "product": "Produkt",
+  "net.start": "Netto Start",
+  "remaining": "Rest",
+  "empty": "Leer",
+  "full": "Voll",
+  "partial": "Angefangen",
+  "new.product": "Neues Produkt",
+  "new.spool": "Neue Rolle"
+}

@@ -5,6 +5,7 @@ import NewSpoolForm from './components/NewSpoolForm'
 import SpoolList from './components/SpoolList'
 import ColorOverview from './components/ColorOverview'
 import { Plus, Palette, Boxes, Trash2, ChevronRight, ChevronDown } from 'lucide-react'
+import { t } from './i18n-rt'
 import './style.css'
 
 export default function App() {
@@ -73,7 +74,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <h2>Filament Lager</h2>
+      <h2>{t('app.title')}</h2>
 
       <section className="card">
         <button

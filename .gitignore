@@ -33,6 +33,5 @@ backend/**/__pycache__/
 backend/**/*.py[cod]
 
 # Dev-Datenbanken & Uploads
-backend/*.db
-backend/*.sqlite3
-
+backend/data/*.db
+data/*.db
