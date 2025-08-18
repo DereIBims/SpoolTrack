@@ -1,5 +1,19 @@
 import React from 'react'
-import './style.css'
-import { createRoot } from 'react-dom/client'
+import ReactDOM from 'react-dom/client'
 import App from './App'
-createRoot(document.getElementById('root')!).render(<App />)
+import './style.css'
+import { initI18n } from './i18n-rt'
+
+async function bootstrap() {
+    try {
+        await initI18n()
+    } catch (e) {
+        console.error(e)
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')!).render(
+        <App />
+    )
+}
+
+bootstrap()

@@ -1,0 +1,16 @@
+.git
+.gitignore
+LICENSE
+README.md
+Dockerfile
+docker-compose*.yml
+*.log
+*.env
+*.env.*
+
+frontend/node_modules
+frontend/dist
+
+backend/__pycache__
+backend/*.pyc
+backend/data
