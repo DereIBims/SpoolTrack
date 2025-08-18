@@ -1,5 +1,7 @@
 import axios from 'axios'
-export const API = axios.create({ baseURL: 'http://localhost:8000' })
+const DEFAULT_API_BASE = '/api'
+
+export const API = axios.create({ baseURL: DEFAULT_API_BASE })
 
 export type Product = {
   id: number

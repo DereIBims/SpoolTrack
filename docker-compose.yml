@@ -1,0 +1,12 @@
+services:
+  filament:
+    build:
+      context: .
+    container_name: spool-manager
+    ports:
+      - "8080:80"
+    environment:
+      APP_LANG: "de"
+    volumes:
+      - ./data:/srv/backend/data
+    restart: unless-stopped

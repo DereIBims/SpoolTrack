@@ -1,0 +1,20 @@
+{
+  "app.title": "Filament Inventory",
+  "add.section": "Add",
+  "colors.section": "Color Overview",
+  "material": "Material",
+  "color": "Color",
+  "in.stock": "In stock",
+  "left.open": "Left open",
+  "active.spools": "Active spools",
+  "empty.spools": "Empty spools",
+  "spool.id": "Spool ID",
+  "product": "Product",
+  "net.start": "Net start",
+  "remaining": "Remaining",
+  "empty": "Empty",
+  "full": "Full",
+  "partial": "Partial",
+  "new.product": "New product",
+  "new.spool": "New spool"
+}
