@@ -6,7 +6,7 @@ import { API } from '../api'
 import LabelCard from '../components/LabelCard'
 
 export async function openLabelAsPng(spoolId: string) {
-  const { data } = await API.get(`/api/spools/${spoolId}/label`)
+  const { data } = await API.get(`/spools/${spoolId}/label`)
 
   // Offscreen Container
   const holder = document.createElement('div')

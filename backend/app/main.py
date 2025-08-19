@@ -9,7 +9,9 @@ from .models import (
 from .db import init_db, get_session
 from .utils import clamp_nonnegative
 
-app = FastAPI(title="Filament Lager API")
+app = FastAPI(
+    title="Spool Manager API",
+)
 
 app.add_middleware(
     CORSMiddleware,

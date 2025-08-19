@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:80"
     environment:
-      APP_LANG: "de"
+      APP_LANG: "en"
     volumes:
       - ./data:/srv/backend/data
     restart: unless-stopped

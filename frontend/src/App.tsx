@@ -20,8 +20,8 @@ export default function App() {
 
   const refresh = useCallback(async () => {
     const [p, s] = await Promise.all([
-      API.get<Product[]>('/api/products'),
-      API.get<Spool[]>('/api/spools')
+      API.get<Product[]>('/products'),
+      API.get<Spool[]>('/spools')
     ])
     setProducts(p.data)
     setSpools(s.data)
@@ -82,7 +82,7 @@ export default function App() {
           onClick={() => setOpenAdd(v => !v)}
           aria-expanded={openAdd}
         >
-          <span className="left"><Plus size={18} /> Hinzufügen</span>
+          <span className="left"><Plus size={18} /> {t('add.section')}</span>
           <span className="right">{openAdd ? <ChevronDown size={18} /> : <ChevronRight size={18} />}</span>
         </button>
         {openAdd && (
@@ -98,16 +98,16 @@ export default function App() {
       <section className="card">
         <div className="section-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', flexWrap: 'wrap' }}>
           <h3 className="section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Palette size={18} /> Farb-Übersicht
+            <Palette size={18} />{t('colors.section')}
           </h3>
           <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '0.9rem' }}>Material:</span>
+            <span style={{ fontSize: '0.9rem' }}>{t('material')}:</span>
             <select
               value={materialFilter}
               onChange={(e) => setMaterialFilter(e.target.value)}
               aria-label="Material filtern"
             >
-              <option value="">Alle Materialien</option>
+              <option value="">{t('all.section')}</option>
               {materials.map(m => (
                 <option key={m} value={m}>{m}</option>
               ))}
@@ -130,7 +130,7 @@ export default function App() {
             aria-expanded={openActive}
             style={{ flex: 1 }}
           >
-            <span className="left"><Boxes size={18} /> Aktive Rollen</span>
+            <span className="left"><Boxes size={18} /> {t('active.spools')}</span>
             <span className="right">
               <span className="badge">{activeSpools.length}</span>
               {openActive ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
@@ -140,10 +140,9 @@ export default function App() {
           {/* Suchfeld neben/in der Überschrift, sichtbar auch wenn zugeklappt */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '0.9rem' }}>Spool-ID:</span>
+              <span style={{ fontSize: '0.9rem' }}>{t('spool.id')}:</span>
               <input
                 type="text"
-                placeholder="z. B. 123"
                 value={spoolIdQuery}
                 onChange={(e) => {
                   const val = e.target.value
@@ -160,7 +159,7 @@ export default function App() {
                 onClick={() => setSpoolIdQuery('')}
                 title="Filter zurücksetzen"
               >
-                Zurücksetzen
+                {t('reset.id.search')}
               </button>
             )}
           </div>
@@ -175,7 +174,7 @@ export default function App() {
 
       <section className="card">
         <button className="accordion" onClick={() => setOpenEmpty(o => !o)} aria-expanded={openEmpty}>
-          <span className="left"><Trash2 size={18} /> Leere Rollen</span>
+          <span className="left"><Trash2 size={18} /> {t('empty.spools')}</span>
           <span className="right"><span className="badge">{emptySpools.length}</span>{openEmpty ? <ChevronDown size={18} /> : <ChevronRight size={18} />}</span>
         </button>
         {openEmpty && (

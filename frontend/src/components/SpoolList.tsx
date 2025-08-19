@@ -5,6 +5,7 @@ import LabelCard from './LabelCard'
 import { ChevronDown, ChevronRight, Scale, QrCode } from 'lucide-react'
 import { createRoot } from 'react-dom/client'
 import html2canvas from 'html2canvas'
+import { t } from '../i18n-rt'
 
 export default function SpoolList({
   spools,
@@ -22,16 +23,23 @@ export default function SpoolList({
     Object.fromEntries(products.map(p => [p.id, p]))
 
   async function sendWeight(id: string) {
-    const g = Number(prompt('Gemessenes BRUTTO (g):'))
-    if (!Number.isFinite(g)) return
-    await API.post(`/api/spools/${id}/weight`, { measured_g: g })
-    onChanged()
+    const input = prompt(t('measured.gross'));
+    if (input === null) return;                        // Abbrechen gedrückt -> raus
+
+    const txt = input.trim();
+    if (!txt) return;                                  // Leere Eingabe -> raus
+
+    const g = Number.parseFloat(txt.replace(',', '.'));// Dezimalkomma erlauben
+    if (!Number.isFinite(g) || g <= 0) return;         // Ungültig/≤0 -> raus
+
+    await API.post(`/spools/${id}/weight`, { measured_g: g });
+    onChanged();
   }
 
 
-  if (!spools.length) return <div>Keine Rollen in dieser Kategorie.</div>
+  if (!spools.length) return <div>{t('no.spools.available')}.</div>
 
-    return (
+  return (
     <div className="item-list">
       {[...spools]
         .sort((a, b) => {
@@ -59,13 +67,13 @@ export default function SpoolList({
           const isPartial = s.net_current_g > 0 && s.net_current_g < s.net_start_g
 
           let pillClass = 'pill-empty'
-          let pillLabel = 'Leer'
+          let pillLabel = t('empty')
           if (isFull) {
             pillClass = 'pill-full'
-            pillLabel = 'Voll'
+            pillLabel = t('full')
           } else if (isPartial) {
             pillClass = 'pill-partial'
-            pillLabel = 'Angefangen'
+            pillLabel = t('partial')
           }
 
           return (
@@ -78,28 +86,28 @@ export default function SpoolList({
 
                 <div className="item-grid">
                   <div className="item-field">
-                    <div className="item-label">Rollen-ID</div>
+                    <div className="item-label">{t('spool.id')}</div>
                     <div className="item-value">{s.id}</div>
                   </div>
                   <div className="item-field">
-                    <div className="item-label">Produkt</div>
+                    <div className="item-label">{t('product')}</div>
                     <div className="item-value">
                       {p ? `${p.manufacturer} ${p.name}` : `#${s.product_id}`}
                     </div>
                   </div>
                   <div className="item-field">
-                    <div className="item-label">Farbe</div>
+                    <div className="item-label">{t('color')}</div>
                     <div className="item-value">
                       <span className="color-dot" style={{ background: p?.color_hex }} />
                       {p?.color_name ?? '–'}
                     </div>
                   </div>
                   <div className="item-field">
-                    <div className="item-label">Netto Start</div>
+                    <div className="item-label">{t('net.start')}</div>
                     <div className="item-value">{s.net_start_g} g</div>
                   </div>
                   <div className="item-field">
-                    <div className="item-label">Rest</div>
+                    <div className="item-label">{t('remaining')}</div>
                     <div className="item-value">{s.net_current_g} g</div>
                   </div>
                 </div>
@@ -121,11 +129,11 @@ export default function SpoolList({
               {showActions && isOpen && (
                 <div className="item-panel">
                   <button className="btn" onClick={() => sendWeight(s.id)}>
-                    <Scale size={16} /> Gewicht
+                    <Scale size={16} /> {t('weight')}
                   </button>
                   <button className="btn" onClick={() => openLabelAsPng(s.id)}>
-					<QrCode size={16} /> Label
-				  </button>
+                    <QrCode size={16} /> {t('label')}
+                  </button>
                 </div>
               )}
             </article>

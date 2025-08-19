@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { API } from '../api'
 import { SketchPicker } from 'react-color'
+import { t } from '../i18n-rt'
 
 export default function NewProductForm({ onCreated }: { onCreated: () => void }) {
   const defaultForm = {
@@ -20,7 +21,7 @@ export default function NewProductForm({ onCreated }: { onCreated: () => void })
     const payload = { ...form, stock_unopened: 0  }
     if (payload.nominal_net_g === undefined) payload.nominal_net_g = 1000
     if (payload.stock_unopened === undefined) payload.stock_unopened = 0
-    await API.post('/api/products', payload)
+    await API.post('/products', payload)
     setForm(defaultForm) // Felder leeren
 	setPickerKey(prev => prev + 1) // 🔹 Picker neu mounten
     onCreated()
@@ -28,10 +29,10 @@ export default function NewProductForm({ onCreated }: { onCreated: () => void })
 
   return (
   <form className="card grid" onSubmit={submit}>
-    <h3>Neues Produkt</h3>
+    <h3>{t('new.product')}</h3>
     <div className="grid cols-2">
       <label>
-        Name
+        {t('product.name')}
         <input
           value={form.name}
           onChange={e => setForm({ ...form, name: e.target.value })}
@@ -40,7 +41,7 @@ export default function NewProductForm({ onCreated }: { onCreated: () => void })
       </label>
 
       <label>
-        Hersteller
+        {t('product.manufacturer')}
         <input
           value={form.manufacturer}
           onChange={e => setForm({ ...form, manufacturer: e.target.value })}
@@ -49,7 +50,7 @@ export default function NewProductForm({ onCreated }: { onCreated: () => void })
       </label>
 
       <label>
-        Material (PLA, PETG…)
+        {t('material')} (PLA, PETG…)
         <input
           value={form.material}
           onChange={e => setForm({ ...form, material: e.target.value })}
@@ -57,7 +58,7 @@ export default function NewProductForm({ onCreated }: { onCreated: () => void })
       </label>
 
       <label>
-        Farbname
+        {t('product.color.name')}
         <input
           value={form.color_name}
           onChange={e => setForm({ ...form, color_name: e.target.value })}
@@ -66,10 +67,10 @@ export default function NewProductForm({ onCreated }: { onCreated: () => void })
       </label>
 
       <label>
-        Nominalgewicht (g)
+        {t('product.nominal')} (g)
         <input
           type="number"
-          placeholder="Standard 1000"
+          placeholder="1000"
           value={form.nominal_net_g ?? ''}
           onChange={e =>
             setForm({
@@ -96,7 +97,7 @@ export default function NewProductForm({ onCreated }: { onCreated: () => void })
       </div>
     </div>
 
-    <button>Speichern</button>
+    <button>{t('save')}</button>
   </form>
 )
 

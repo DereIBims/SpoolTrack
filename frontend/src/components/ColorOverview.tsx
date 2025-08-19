@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import { Product, Spool } from '../api'
+import { t } from '../i18n-rt'
 
 export default function ColorOverview({ products, spools }: { products: Product[], spools: Spool[] }) {
   // Statistik je Produkt: Rollenanzahl und Summe angefangener Rollen (g)
@@ -15,7 +16,7 @@ export default function ColorOverview({ products, spools }: { products: Product[
     return map
   }, [spools])
 
-  if (!products.length) return <div>Keine Produkte vorhanden.</div>
+  if (!products.length) return <div>{t('no.products.available')}.</div>
 
   return (
     <div
@@ -37,11 +38,11 @@ export default function ColorOverview({ products, spools }: { products: Product[
             {/* Material & Farbe in 2 Spalten, mit Überschriften wie bei "Auf Lager" */}
             <div className="item-field item-field-2col">
               <div className="item-col">
-                <div className="item-label">Material</div>
+                <div className="item-label">{t('material')}</div>
                 <div className="item-value">{p.material}</div>
               </div>
               <div className="item-col">
-                <div className="item-label">Farbe</div>
+                <div className="item-label">{t('color')}</div>
                 <div className="item-value">
                   {p.color_name}
                   <span
@@ -55,11 +56,11 @@ export default function ColorOverview({ products, spools }: { products: Product[
             {/* Lagerwerte: 2 Spalten, Titel + Werte */}
             <div className="item-field item-field-2col">
               <div className="item-col">
-                <div className="item-label">Auf Lager</div>
+                <div className="item-label">{t('in.stock')}</div>
                 <div className="item-value">{entry.count}</div>
               </div>
               <div className="item-col">
-                <div className="item-label">Rest offen</div>
+                <div className="item-label">{t('open.remain')}</div>
                 <div className="item-value">{entry.partialSum} g</div>
               </div>
             </div>
