@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { API, Product, Spool } from '../api'
 import { openLabelAsPng } from '../utils/printLabel'
+import { t } from '../i18n-rt'
 
 // Diese Version erhält die Produktliste als Prop von App.tsx.
 // Sobald in NewProductForm ein neues Produkt erstellt wurde und App.refresh() läuft,
@@ -26,7 +27,7 @@ export default function NewSpoolForm({
     const payload = { ...form }
     if (payload.net_start_g === undefined) payload.net_start_g = 1000
 
-    const { data } = await API.post<Spool>('/api/spools', payload)
+    const { data } = await API.post<Spool>('/spools', payload)
 
     setForm(defaultForm)
     onCreated(data)
@@ -37,16 +38,16 @@ export default function NewSpoolForm({
 
   return (
     <form className="card grid" onSubmit={submit}>
-      <h3>Neue Rolle</h3>
+      <h3>{t('new.spool')}</h3>
       <div className="grid cols-2">
         <label>
-          Produkt
+          {t('product')}
           <select
             value={form.product_id}
             onChange={e => setForm({ ...form, product_id: +e.target.value })}
             required
           >
-            <option value={0}>Produkt wählen…</option>
+            <option value={0}>{t('choose.product')}…</option>
             {products.map(p => (
               <option key={p.id} value={p.id}>
                 {p.manufacturer} {p.name} · {p.color_name}
@@ -55,25 +56,25 @@ export default function NewSpoolForm({
           </select>
         </label>
         <label>
-          Bruttogewicht (g)
+          {t('gross')} (g)
           <input
             type="number"
-            placeholder="z. B. 1200"
+            placeholder="1200"
             value={form.gross_start_g ?? ''}
             onChange={e => setForm({ ...form, gross_start_g: e.target.value ? +e.target.value : undefined })}
           />
         </label>
         <label>
-          Nettogewicht (g)
+          {t('net')} (g)
           <input
             type="number"
-            placeholder="Standard 1000"
+            placeholder={t('product.nominal.placeholder')}
             value={form.net_start_g ?? ''}
             onChange={e => setForm({ ...form, net_start_g: e.target.value ? +e.target.value : undefined })}
           />
         </label>
         <label>
-          Label-Notiz
+          {t('label.note')}
           <input
             placeholder="Optional"
             value={form.label_note}
@@ -81,7 +82,7 @@ export default function NewSpoolForm({
           />
         </label>
       </div>
-      <button>Anlegen</button>
+      <button>{t('spool.apply')}</button>
     </form>
   )
 }
