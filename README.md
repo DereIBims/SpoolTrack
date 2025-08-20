@@ -16,6 +16,12 @@ It provides a modern React frontend, a FastAPI backend, and runs seamlessly in D
 * 🐳 Easy deployment via **Docker Compose**
 * 🖥️ Runs anywhere that runs Docker
 
+## 🔮 Upcoming Features
+* 📱 QR code scanning via smartphone
+* ⚖️ Automatic weight tracking with QR scan integration
+    - With DIY scale
+* 🗄️ Filament storage location management
+
 
 ---
 
@@ -54,4 +60,4 @@ MIT License – feel free to use and adapt.
 
 ## 👨‍💻 Author
 
-Built with ❤️ by Phips + ChatGPT
+Built with ❤️ by DereIBims + ChatGPT
