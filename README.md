@@ -34,6 +34,7 @@ It provides a modern React frontend, a FastAPI backend, and runs seamlessly in D
   ![New Product Screenshot](./docs/screenshots/new-stuff.png)
 
 * **Label**
+
   ![Label Screenshot](./docs/screenshots/label.png)
 
 ---
