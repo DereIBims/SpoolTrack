@@ -2,6 +2,7 @@ services:
   filament:
     build:
       context: .
+    image: dereibims/spooltrack:latest
     container_name: spool-manager
     ports:
       - "8080:80"

@@ -3,12 +3,13 @@ import { Product, Spool } from '../api'
 import { t } from '../i18n-rt'
 
 export default function ColorOverview({ products, spools }: { products: Product[], spools: Spool[] }) {
-  // Statistik je Produkt: Rollenanzahl und Summe angefangener Rollen (g)
   const stats = useMemo(() => {
     const map: Record<number, { count: number; partialSum: number }> = {}
     for (const s of spools) {
       const entry = (map[s.product_id] ||= { count: 0, partialSum: 0 })
-      entry.count += 1
+      if (s.net_current_g >= s.net_start_g) {
+        entry.count += 1
+      }
       if (s.net_current_g > 0 && s.net_start_g > 0 && s.net_current_g < s.net_start_g) {
         entry.partialSum += s.net_current_g
       }
@@ -34,8 +35,6 @@ export default function ColorOverview({ products, spools }: { products: Product[
             <div style={{ fontWeight: 700 }}>
               {p.manufacturer} {p.name}
             </div>
-
-            {/* Material & Farbe in 2 Spalten, mit Überschriften wie bei "Auf Lager" */}
             <div className="item-field item-field-2col">
               <div className="item-col">
                 <div className="item-label">{t('material')}</div>
@@ -52,8 +51,6 @@ export default function ColorOverview({ products, spools }: { products: Product[
                 </div>
               </div>
             </div>
-
-            {/* Lagerwerte: 2 Spalten, Titel + Werte */}
             <div className="item-field item-field-2col">
               <div className="item-col">
                 <div className="item-label">{t('in.stock')}</div>
