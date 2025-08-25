@@ -1,6 +1,6 @@
-# 🎛️ SpoolManager
+# 🎛️ SpoolTrack
 
-SpoolManager is a web application to manage 3D printing filament products and spools.
+SpoolTrack is a web application to manage 3D printing filament products and spools.
 It provides a modern React frontend, a FastAPI backend, and runs seamlessly in Docker.
 
 ---
