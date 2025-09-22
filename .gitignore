@@ -36,3 +36,4 @@ backend/**/*.py[cod]
 backend/data/*.db
 backend/data
 data/*.db
+data/
