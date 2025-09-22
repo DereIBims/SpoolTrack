@@ -11,3 +11,16 @@ services:
     volumes:
       - ./data:/srv/backend/data
     restart: unless-stopped
+
+
+x-bake:
+  targets:
+    filament:
+      tags:
+        - dereibims/spooltrack:latest
+      platforms:
+        - linux/amd64
+        - linux/arm64
+        - linux/arm/v7
+
+    

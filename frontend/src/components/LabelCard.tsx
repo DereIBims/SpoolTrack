@@ -48,7 +48,7 @@ export default function LabelCard({ data }: Props) {
           <div className="qr-box">
             {/* QR jetzt kleiner */}
             <QRCodeCanvas
-              value={data.spool_id}
+              value={`${window.location.protocol}//${window.location.hostname}/api/spools/${data.spool_id}/weight`}
               level="H"
               size={72}
               imageSettings={{

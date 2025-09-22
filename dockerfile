@@ -1,5 +1,5 @@
 # --- Frontend Build ---
-FROM node:20-alpine AS fe
+FROM --platform=$BUILDPLATFORM node:20-alpine AS fe
 WORKDIR /app
 COPY frontend/package*.json ./
 RUN --mount=type=cache,target=/root/.npm npm install
